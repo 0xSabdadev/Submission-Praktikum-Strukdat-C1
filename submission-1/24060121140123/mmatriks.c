@@ -1,5 +1,5 @@
-/* Program   : maintabel.c */
-/* Deskripsi : Pengaplikasian modul tabel dalam main*/
+/* Program   : mmatriks.c */
+/* Deskripsi : Pengaplikasian modul matriks dalam main*/
 /* NIM/Nama  : 24060121140123/Akbar Ario Satrio Utomo*/
 /* Tanggal   : 17 September 2022*/
 /***********************************/
