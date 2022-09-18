@@ -1,3 +1,9 @@
+/* Program   : matriks.h*/
+/* Deskripsi : Header file berisi abstrak modul matriks*/
+/* NIM/Nama  : 24060121140123/Akbar Ario Satrio Utomo*/
+/* Tanggal   : 17 September 2022*/
+/***********************************/
+
 #ifndef MATRIKS_H
 #define MATRIKS_H
 
