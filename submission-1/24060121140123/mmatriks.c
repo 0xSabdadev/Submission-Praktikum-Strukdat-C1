@@ -1,3 +1,9 @@
+/* Program   : maintabel.c */
+/* Deskripsi : Pengaplikasian modul tabel dalam main*/
+/* NIM/Nama  : 24060121140123/Akbar Ario Satrio Utomo*/
+/* Tanggal   : 17 September 2022*/
+/***********************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "matriks.c"
