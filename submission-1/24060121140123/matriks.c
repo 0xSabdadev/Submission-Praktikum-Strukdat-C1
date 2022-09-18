@@ -1,3 +1,9 @@
+/* Program   : matriks.c */
+/* Deskripsi : Realisasi fungsi dan prosedur matriks*/
+/* NIM/Nama  : 24060121140123/Akbar Ario Satrio Utomo*/
+/* Tanggal   : 17 September 2022*/
+/***********************************/
+
 #include <stdio.h>
 #include <stdbool.h>
 #include "matriks.h"
