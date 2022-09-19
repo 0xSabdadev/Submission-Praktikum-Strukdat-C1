@@ -1,6 +1,6 @@
 /* Program   : main.c */
 /* Deskripsi : realisasi matriks */
-/* NIM/Nama  : Labiba Adinda Zahwana/ 24060121140111*/
+/* Nama/ NIM  : Labiba Adinda Zahwana/ 24060121140111*/
 /* Tanggal   : 18 September 2022*/
 /***********************************/
 #include <stdio.h>
