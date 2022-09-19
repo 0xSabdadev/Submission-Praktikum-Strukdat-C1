@@ -1,6 +1,6 @@
 /* Program   : matriks.c */
 /* Deskripsi : realisasi matriks */
-/* NIM/Nama  : Labiba Adinda Zahwana/ 24060121140111*/
+/* Nama/ NIM  : Labiba Adinda Zahwana/ 24060121140111*/
 /* Tanggal   : 18 September 2022*/
 /***********************************/
 #include <stdio.h>
@@ -315,7 +315,7 @@ bool IsSatuanMatriks (Matriks M){
 }
 
 /*function IsSparseMatriks(M:Matriks)->boolean*/
-/*{mengembalikan true jika matriks M adalah matriks sparse: matriks ìjarangî dengan definisi:
+/*{mengembalikan true jika matriks M adalah matriks sparse: matriks ‚Äújarang‚Äù dengan definisi:
 hanya maksimal 5% dari element matriks yang efektif bukan bernilai kosong(-999)}*/
 bool IsSparseMatriks (Matriks M){
     // Kamus lokal
