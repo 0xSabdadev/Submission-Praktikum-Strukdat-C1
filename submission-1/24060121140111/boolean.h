@@ -3,7 +3,7 @@
 /* Program   : */
 /* Program   : boolean.h */
 /* Deskripsi : */
-/* NIM/Nama  : Labiba Adinda Zahwana/ 24060121140111*/
+/* Nama/ NIM  : Labiba Adinda Zahwana/ 24060121140111*/
 /* Tanggal   : 18 September 2022*/
 /***********************************/
 
