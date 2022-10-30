@@ -1,0 +1,806 @@
+#ifndef boolean_H
+#define boolean_H
+/***********************************/
+/* Program   : boolean.h */
+/* Deskripsi : header file modul boolean */
+/* NIM/Nama  : 24060121120031/ Yesy Margahretta Munthe*/
+/* Tanggal   : 30 oktober 2022*/
+/***********************************/
+
+//type boolean macro bahasa C, false=0, true=1
+#define false 0
+#define true  1
+#define boolean unsigned char
+
+#endif
+
+
+#ifndef list_C
+#define list_C
+#include "boolean.h"
+#include "list.h"
+#include <stdio.h>
+
+/* Program   : list.c */
+/* Deskripsi : realisasi body file modul ADT Linked List Linear */
+/* NIM/Nama  : 24060121120031/ Yesy Margharetta Munthe*/
+/* Tanggal   : 30 Oktober 2022*/
+/***********************************/
+
+/* ----- Test List Kosong ----- */
+/* Mengirim true jika list kosong */
+boolean ListEmpty (List L){
+    /*Kamus Lokal*/
+
+    /*Algoritma*/
+    return First(L) == Nil;
+
+}
+
+
+/* ----- Pembuatan List Kosong ----- */
+/* I.S. : sembarang
+F.S. : Terbentuk list kosong */
+void CreateList (List *L){
+    /*Kamus Lokal*/
+
+    /*Algoritma*/
+    First((*L)) = Nil;
+}
+
+/*  ----- Manajemen Memori ----- */
+/*  Mengirimkan address hasil alokasi sebuah elemen */
+/*  Jika alokasi berhasil, maka address tidak Nil,
+    dan misalnya menghasilkan P, maka
+    Info(P) = X, Next(P) = Nil
+    Jika alokasi gagal, mengirimkan Nil */
+address Alokasi (infotype X){
+    /*Kamus Lokal*/
+    address P;
+
+    /*Algoritma*/
+    P = (address)malloc(sizeof(ElmtList));
+
+    if (P != Nil){
+        info(P) = X;
+        next(P) = Nil;
+    }
+
+    return P;
+}
+
+/* I.S. : P terdefinisi
+F.S. : P dikembalikan ke sistem
+Melakukan dealokasi/pengembalian address P */
+void Dealokasi (address *P){
+    /*Kamus Lokal*/
+
+    /*Algoritma*/
+    info((*P)) = 0;
+    next((*P)) = Nil;
+    (*P) = Nil;
+}
+
+/****************** PENCARIAN SEBUAH ELEMEN LIST ******************/
+/* Mencari apakah ada elemen list dengan info(P)= X */
+/* Jika ada, mengirimkan address elemen tersebut. */
+/* Jika tidak ada, mengirimkan Nil */
+address Search(List L, infotype X){
+    /*Kamus Lokal*/
+    address P;
+
+
+    /*Algoritma*/
+    P = First(L);
+
+    while (P != Nil){
+        if (X == info(P)){
+            return P;
+        }else{
+            P = next(P);
+        }
+    }
+    return Nil;
+}
+
+/* Mencari apakah ada elemen list yang beralamat P */
+/* Mengirimkan true jika ada, false jika tidak ada */
+boolean FSearch(List L, address P){
+    /*Kamus Lokal*/
+    address Q;
+
+
+    /*Algoritma*/
+    Q = First(L);
+    while (P != Nil){
+        if (Q == P){
+            return true;
+        }else{
+            Q = next(Q);
+        }
+    }
+
+    return false;
+}
+
+/* Mengirimkan address elemen sebelum elemen yang nilainya=X */
+/* Mencari apakah ada elemen list dengan info(P)= X */
+/* Jika ada, mengirimkan address Prec, dengan Next(Prec)=P */
+/* dan Info(P)=X. */
+/* Jika tidak ada, mengirimkan Nil */
+/* Jika P adalah elemen pertama, maka Prec=Nil */
+/* Search dengan spesifikasi seperti ini menghindari */
+/* traversal ulang jika setelah Search akan dilakukan operasi lain*/
+address SearchPrec(List L, infotype X, address *Prec){
+    /*Kamus Lokal*/
+    address P;
+
+    /*Algoritma*/
+    (*Prec) = Nil;
+    P = First(L);
+    while (P != Nil){
+        if (X == info(P)){
+            return *Prec;
+        }else{
+            (*Prec) = P;
+            P = next(P);
+        }
+    }
+    return Nil;
+}
+
+/****************** PRIMITIF BERDASARKAN NILAI ******************/
+/*** PENAMBAHAN ELEMEN BERDASARKAN ALAMAT ***/
+
+/*  I.S. : Sembarang, P sudah dialokasi
+    F.S. : Menambahkan elemen ber-address P sebagai elemen pertama */
+void InsertFirst (List *L, address P){
+    /*Kamus Lokal*/
+
+
+    /*Algoritma*/
+    next(P) = First((*L));
+    First((*L)) = P;
+}
+
+
+/* I.S. : Prec pastilah elemen list dan bukan elemen terakhir,
+P sudah dialokasi
+F.S. : Insert P sebagai elemen sesudah elemen beralamat Prec */
+void InsertAfter (List *L, address P, address Prec){
+    /*Kamus Lokal*/
+
+
+    /*Algoritma*/
+    next(P) = next(Prec);
+    next(Prec) = P;
+
+}
+
+/* I.S. : Sembarang, P sudah dialokasi
+F.S. : P ditambahkan sebagai elemen terakhir yang baru */
+void InsertLast (List *L, address P){
+    /*Kamus Lokal*/
+    address last, prec;
+
+
+    /*Algoritma*/
+    if (ListEmpty(*L)){
+        InsertFirst(&(*L), P);
+    }else{
+        last = First((*L));
+        while (next(last) != Nil){
+            last = next(last);
+        }
+        InsertAfter(&(*L), P, last);
+    }
+
+}
+
+/*** PENGHAPUSAN SEBUAH ELEMEN ***/
+
+/* I.S. List tidak kosong */
+/* F.S. P adalah alamat elemen pertama list sebelum penghapusan */
+/* Elemen list berkurang satu (mungkin menjadi kosong) */
+/* First element yg baru adalah suksesor elemen pertama yang lama */
+void DelFirst(List *L, address *P){
+    /*Kamus Lokal*/
+
+
+    /*Algoritma*/
+    if (!ListEmpty((*L))){
+        (*P) = First((*L));
+        First((*L)) = next(First((*L)));
+    }else{
+        printf("List Kosong");
+    }
+}
+
+/* I.S. List tidak kosong */
+/* F.S. P adalah alamat elemen terakhir list sebelum penghapusan */
+/* Elemen list berkurang satu (mungkin menjadi kosong) */
+/* Last element baru adalah predesesor elemen pertama yg lama, */
+/* jika ada */
+void DelLast(List *L, address *P){
+    /*Kamus Lokal*/
+    address Last, PrecLast;
+
+    /*Algoritma*/
+    PrecLast = Nil;
+    Last = First((*L));
+    while(next(Last) != Nil){
+        PrecLast = Last;
+        Last = next(Last);
+    }
+    (*P) = Last;
+    if (next(First((*L))) == Nil){
+        First((*L)) = Nil;
+    }else{
+        next(PrecLast) = Nil;
+    }
+}
+
+
+/*Mencari alamat elemen terakhir dan sebelumnya*/
+void AdrLast(List *L, address *Prec, address *Last){
+    /*Kamus Lokal*/
+
+    /*Algoritma*/
+    (*Prec) = Nil;
+    (*Last) = First((*L));
+    while (next(*Last) != Nil){
+        (*Prec) = (*Last);
+        (*Last) = next(*Last);
+    }
+
+}
+
+/* I.S. List tidak kosong. Prec adalah anggota list */
+/* F.S. Menghapus Next(Prec): */
+/* Pdel adalah alamat elemen list yang dihapus */
+void DelAfter(List *L, address *Pdel, address Prec){
+    /*Kamus Lokal*/
+
+
+    /*Algoritma*/
+    (*Pdel) = next(Prec);
+    next(Prec) = next(next(Prec));
+    next((*Pdel)) = Nil;
+}
+
+/* I.S. Sembarang */
+/* F.S. Jika ada elemen list beraddress P, dengan info(P)=X */
+/* Maka P dihapus dari list dan di-dealokasi */
+/* Jika tidak ada elemen list dengan info(P)=X, maka list tetap */
+/* List mungkin menjadi kosong karena penghapusan */
+void DelP(List *L, infotype X){
+    /*Kamus Lokal*/
+    address P, Prec;
+
+
+    /*Algoritma*/
+    if(!ListEmpty((*L)) && Search((*L), X) != Nil){
+        if(info(First(*L)) == X){
+            P = First((*L));
+            First((*L)) = next(First((*L)));
+        }
+        else{
+            Prec = First(*L);
+            while (info(next(Prec)) != X){
+                Prec = next(Prec);
+            }
+            if (info(next(Prec)) == X){
+                DelAfter(&(*L), &P, Prec);
+            }
+        }
+    }
+
+
+}
+
+/****************** PRIMITIF BERDASARKAN NILAI ******************/
+/*** PENAMBAHAN ELEMEN ***/
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen pertama dengan nilai X jika alokasi berhasil */
+void InsVFirst(List *L, infotype X){
+    /*Kamus Lokal*/
+    address P;
+
+    /*Algoritma*/
+    P = Alokasi(X);
+    if (P != Nil){
+        InsertFirst(&(*L), P);
+    }
+}
+
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen list di akhir: elemen terakhir yang baru */
+/* bernilai X jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
+void InsVLast(List *L, infotype X){
+    /*Kamus Lokal*/
+    address P;
+
+
+    /*Algoritma*/
+    P = Alokasi(X);
+    if (P != Nil){
+        InsertLast(&(*L), P);
+    }
+}
+/* procedure InsVAfter2 (input/output L: List, input Prec: infotype, input X: infotype)
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen bernilai X setelah elemen bernilai Prec */
+/* Jika alokasi gagal: I.S.= F.S. */
+void InsVAfter2(List *L, infotype Prec, infotype X){
+    /*Kamus Lokal*/
+    address P, Q;
+
+
+    /*Algoritma*/
+    P = Alokasi(X);
+    Q = First(*L);
+    if (ListEmpty((*L))){
+        InsVFirst(&(*L), X);
+    }else{
+        while (info(Q) != Prec){
+            Q = next(Q);
+        }
+        next(P) = next(Q);
+        next(Q) = P;
+    }
+}
+
+/* procedure InsVAfter1 (input/output L: List, input Prec: address, input X: address)*/
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen bernilai X setelah elemen bernilai Prec */
+/* Jika alokasi gagal: I.S.= F.S. */
+void InsVAfter1(List *L, address Prec, address X){
+    /*Kamus Lokal*/
+
+    /*Algoritma*/
+    next(X) = next(Prec);
+    next(Prec) = X;
+}
+
+
+/*** PENGHAPUSAN ELEMEN ***/
+/* I.S. List L tidak kosong */
+/* F.S. Elemen pertama list dihapus: nilai info disimpan pada X */
+/* dan alamat elemen pertama di-dealokasi */
+void DelVFirst(List *L, infotype *X){
+    /*Kamus Lokal*/
+    address P;
+
+
+    /*Algoritma*/
+    P = First((*L));
+    (*X) = info(P);
+    First((*L)) = next(First(*L));
+    next(P) = Nil;
+    Dealokasi(&P);
+
+}
+
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir list dihapus: nilai info disimpan pada X */
+/* dan alamat elemen terakhir di-dealokasi */
+void DelVLast(List *L, infotype *X){
+    /*Kamus Lokal*/
+    address P;
+
+    /*Algoritma*/
+    DelLast(&(*L), &P);
+    (*X) = info(P);
+    Dealokasi(&P);
+}
+
+/* procedure DelVAfter2 (input/output L: List, input/output X: infotype, input Y: address)
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir setelah elemen dengan nilai address Y: nilai address disimpan pada X */
+/*      dan alamat elemen X tersebut di-dealokasi */
+void DelVAfter2(List *L, address *X, address Y){
+    /*Kamus Lokal*/
+
+
+    /*Algoritma*/
+    if (next(Y) != Nil){
+        (*X) = next(Y);
+        next(Y) = next(next(Y));
+        next((*X)) = Nil;
+
+        Dealokasi(&(*X));
+    }else{
+        (*X) = Nil;
+    }
+
+}
+
+/* procedure DelVAfter1 (input/output L: List, input/output X: infotype, input Y: infotype)
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir setelah elemen dengan nilai info Y: nilai info disimpan pada X */
+/*      dan alamat elemen nilsi info Y tersebut di-dealokasi */
+void DelVAfter1(List *L, infotype *X, infotype Y){
+    /*Kamus Lokal*/
+    address P, Q;
+
+    /*Algortima*/
+    P = First((*L));
+    while(info(P) != Y){
+        P = next(P);
+    }
+    Q = next(P);
+    (*X) = info(next(P));
+
+    next(P) = next(next(P));
+    next(Q) = Nil;
+    Dealokasi(&Q);
+
+}
+
+//
+//
+/****************** PROSES SEMUA ELEMEN LIST ******************/
+/* I.S. List mungkin kosong */
+/* F.S. Jika list tidak kosong, */
+/* Semua info yg disimpan pada elemen list diprint */
+/* Jika list kosong, hanya menuliskan "list kosong" */
+void Printinfo(List L){
+    /*Kamus Lokal*/
+    address P;
+
+    /*Algoritma*/
+    if (ListEmpty(L)){
+        printf("List Kosong");
+    }else{
+        P = First(L);
+        while (P != Nil){
+            printf("%d ", info(P));
+            P = next(P);
+        }
+    }
+
+}
+/* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
+int NbElmt(List L){
+    /*Kamus Lokal*/
+    address P;
+    int banyak;
+
+    /*Algoritma*/
+    banyak = 0;
+    P = First(L);
+    while (P != Nil){
+        banyak += 1;
+        P = next(P);
+    }
+
+    return banyak;
+}
+
+
+//
+
+
+#endif
+
+/* Program   : list.h */
+/* Deskripsi : ADT Linked List Linear */
+/* NIM/Nama  : 24060121120031/ Yesy Margharetta Munthe*/
+/* Tanggal   : 30 Oktober 2022*/
+/***********************************/
+
+#ifndef list_H
+#define list_H
+
+#include "boolean.h"
+#include <stdio.h>
+
+/*Definisi Selektor*/
+#define Nil NULL
+#define info(P) (P)->info
+#define next(P) (P)->next
+#define First(L) (L).First
+
+/*definisi elemen, alamat dan List Linier*/
+/* type infotype : int */
+typedef int infotype;
+
+/* type *address : tElmtList */
+typedef struct tElmtList *address;
+
+/*type ElmtList = < Info : InfoType, Next : address > */
+typedef struct tElmtList {
+    infotype info;
+    address next;
+}ElmtList;
+
+/* Definisi list : */
+/* List kosong : First(L) = Nil */
+/* Setiap elemen dengan address P dapat diacu info(P), Next(P) */
+/* Elemen terakhir list : jika addressnya Last, maka Next(Last)=Nil */
+typedef struct
+{
+    address First;
+} List;
+
+
+/* PROTOTYPE */
+/****************** TEST LIST KOSONG ******************/
+boolean ListEmpty(List L);
+/* Mengirim true jika list kosong */
+
+/****************** PEMBUATAN LIST KOSONG ******************/
+void CreateList(List *L);
+/* I.S. sembarang */
+/* F.S. Terbentuk list kosong */
+/****************** Manajemen Memori ******************/
+address Alokasi(infotype X);
+/* Mengirimkan address hasil alokasi sebuah elemen */
+/* Jika alokasi berhasil, maka address tidak nil, dan misalnya */
+/* menghasilkan P, maka info(P)=X, Next(P)=Nil */
+/* Jika alokasi gagal, mengirimkan Nil */
+void Dealokasi(address *P);
+/* I.S. P terdefinisi */
+/* F.S. P dikembalikan ke sistem */
+/* Melakukan dealokasi/pengembalian address P */
+
+/****************** PENCARIAN SEBUAH ELEMEN LIST ******************/
+address Search(List L, infotype X);
+/* Mencari apakah ada elemen list dengan info(P)= X */
+/* Jika ada, mengirimkan address elemen tersebut. */
+/* Jika tidak ada, mengirimkan Nil */
+boolean FSearch(List L, address P);
+/* Mencari apakah ada elemen list yang beralamat P */
+/* Mengirimkan true jika ada, false jika tidak ada */
+address SearchPrec(List L, infotype X, address *Prec);
+/* Mengirimkan address elemen sebelum elemen yang nilainya=X */
+/* Mencari apakah ada elemen list dengan info(P)= X */
+/* Jika ada, mengirimkan address Prec, dengan Next(Prec)=P */
+/* dan Info(P)=X. */
+/* Jika tidak ada, mengirimkan Nil */
+/* Jika P adalah elemen pertama, maka Prec=Nil */
+/* Search dengan spesifikasi seperti ini menghindari */
+/* traversal ulang jika setelah Search akan dilakukan operasi lain*/
+
+/****************** PRIMITIF BERDASARKAN NILAI ******************/
+/*** PENAMBAHAN ELEMEN ***/
+void InsVFirst(List *L, infotype X);
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen pertama dengan nilai X jika alokasi berhasil */
+void InsVLast(List *L, infotype X);
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen list di akhir: elemen terakhir yang baru */
+/* bernilai X jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
+void InsVAfter2(List *L, infotype Prec, infotype X);
+/* procedure InsVAfter2 (input/output L: List, input Prec: infotype, input X: infotype)
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen bernilai X setelah elemen bernilai Prec */
+/* Jika alokasi gagal: I.S.= F.S. */
+void InsVAfter1(List *L, address Prec, address X);
+/* procedure InsVAfter1 (input/output L: List, input Prec: address, input X: address)*/
+/* I.S. L mungkin kosong */
+/* F.S. Melakukan alokasi sebuah elemen dan */
+/* menambahkan elemen bernilai X setelah elemen bernilai Prec */
+/* Jika alokasi gagal: I.S.= F.S. */
+
+/*** PENGHAPUSAN ELEMEN ***/
+void DelVFirst(List *L, infotype *X);
+/* I.S. List L tidak kosong */
+/* F.S. Elemen pertama list dihapus: nilai info disimpan pada X */
+/* dan alamat elemen pertama di-dealokasi */
+void DelVLast(List *L, infotype *X);
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir list dihapus: nilai info disimpan pada X */
+/* dan alamat elemen terakhir di-dealokasi */
+void DelVAfter2(List *L, address *X, address Y);
+/* procedure DelVAfter2 (input/output L: List, input/output X: infotype, input Y: infotype)
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir setelah elemen dengan nilai address Y: nilai address disimpan pada X */
+/*      dan alamat elemen X tersebut di-dealokasi */
+void DelVAfter1(List *L, infotype *X, infotype Y);
+/* procedure DelVAfter1 (input/output L: List, input/output X: infotype, input Y: infotype)
+/* I.S. list tidak kosong */
+/* F.S. Elemen terakhir setelah elemen dengan nilai info Y: nilai info disimpan pada X */
+/*      dan alamat elemen nilsi info Y tersebut di-dealokasi */
+
+
+/****************** PRIMITIF BERDASARKAN ALAMAT ******************/
+/*** PENAMBAHAN ELEMEN BERDASARKAN ALAMAT ***/
+void InsertFirst(List *L, address P);
+/* I.S. Sembarang, P sudah dialokasi */
+/* F.S. Menambahkan elemen ber-address P sebagai elemen pertama */
+void InsertAfter(List *L, address P, address Prec);
+/* I.S. Prec pastilah elemen list dan bukan elemen terakhir, */
+/* P sudah dialokasi */
+/* F.S. Insert P sebagai elemen sesudah elemen beralamat Prec */
+void InsertLast(List *L, address P);
+/* I.S. Sembarang, P sudah dialokasi */
+/* F.S. P ditambahkan sebagai elemen terakhir yang baru */
+/*** PENGHAPUSAN SEBUAH ELEMEN ***/
+void DelFirst(List *L, address *P);
+/* I.S. List tidak kosong */
+/* F.S. P adalah alamat elemen pertama list sebelum penghapusan */
+/* Elemen list berkurang satu (mungkin menjadi kosong) */
+/* First element yg baru adalah suksesor elemen pertama yang lama */
+void DelLast(List *L, address *P);
+/* I.S. List tidak kosong */
+/* F.S. P adalah alamat elemen terakhir list sebelum penghapusan */
+/* Elemen list berkurang satu (mungkin menjadi kosong) */
+/* Last element baru adalah predesesor elemen pertama yg lama, */
+/* jika ada */
+void AdrLast(List *L, address *Prec, address *Last);
+/*Mencari alamat elemen terakhir dan sebelumnya*/
+void DelAfter(List *L, address *Pdel, address Prec);
+/* I.S. List tidak kosong. Prec adalah anggota list */
+/* F.S. Menghapus Next(Prec): */
+/* Pdel adalah alamat elemen list yang dihapus */
+void DelP(List *L, infotype X);
+/* I.S. Sembarang */
+/* F.S. Jika ada elemen list beraddress P, dengan info(P)=X */
+/* Maka P dihapus dari list dan di-dealokasi */
+/* Jika tidak ada elemen list dengan info(P)=X, maka list tetap */
+/* List mungkin menjadi kosong karena penghapusan */
+
+/****************** PROSES SEMUA ELEMEN LIST ******************/
+void Printinfo(List L);
+/* I.S. List mungkin kosong */
+/* F.S. Jika list tidak kosong, */
+/* Semua info yg disimpan pada elemen list diprint */
+/* Jika list kosong, hanya menuliskan "list kosong" */
+int NbElmt(List L);
+/* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
+/*** Prekondisi untuk Max/Min/rata-rata : List tidak kosong ***/
+
+#endif
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "boolean.h"
+#include "list.h"
+
+int main()
+{
+    /*Kamus Lokal*/
+    List L1, L2;
+    address P1, P2, P3, P4, P5, P6;
+    address F1, F2, F3, Prec1, Prec2, Last1;
+    infotype T1;
+
+    /*Algoritma*/
+    printf("========List =======\n");
+    //Membuat List
+    CreateList(&L1);
+    CreateList(&L2);
+
+    //Memeriksa apakah list kosong
+    printf("Apakah list L1 kosong? %s\n", ListEmpty(L1)? "true":"false");
+
+    //Melakukan alokasi dan memasukkan nilai kedalam list
+    P1 = Alokasi(4);
+    P2 = Alokasi(6);
+    P3 = Alokasi(8);
+    P4 = Alokasi(10);
+    P5 = Alokasi(12);
+
+    //Element List L1 sebelum diisi
+    printf("\n==========SEBELUM DIISII==========\n");
+    printf("Elemen pada list L1:\n");
+    Printinfo(L1);
+
+
+    /*Membuat List*/
+    printf("\n\n==========SETELAH DIISII==========\n");
+    printf("Elemen pada list L1:\n");
+    InsertFirst(&L1, P1);
+    Printinfo(L1);
+
+    printf("\nElemen pada list L1:\n");
+    InsertLast(&L1, P2);
+    Printinfo(L1);
+
+    printf("\nElemen pada list L1:\n");
+    InsertLast(&L1, P3);
+    Printinfo(L1);
+
+    printf("\nElemen pada list L1:\n");
+    InsertAfter(&L1, P4, P2);
+    Printinfo(L1);
+
+    printf("\nElemen pada list L1:\n");
+    InsertFirst(&L1, P5);
+    Printinfo(L1);
+    printf("\n\nBanyak Element L1 adalah %d\n", NbElmt(L1));
+
+    /*Menerapkan Searching*/
+    printf("\n==========APLIKASI SEARCHING===========\n");
+    F1 = Search(L1, 12);
+    printf("Element 12 ditemukan pada L1 dengan alamat %d\n", F1);
+
+    printf("\nApakah element %d(P4) berada pada L1? %s\n", info(P4),FSearch(L1, P4)? "true":"false");
+
+    SearchPrec(L1, 10, &F1);
+    printf("\nAlamat Sebelum Element 10 berada pada alamat %d\n", F1);
+
+
+    /*Menghapus Salah satu Element di List1*/
+    printf("\n======MENGHAPUS ELEMENT DI L1======\n");
+    DelFirst(&L1, &P6);
+    printf("Alamat Element Pertama yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L1:\n");
+    Printinfo(L1);
+
+    DelLast(&L1, &P6);
+    printf("\n\nAlamat Element Terakhir yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L1:\n");
+    Printinfo(L1);
+
+    DelAfter(&L1, &P6, P2);
+    printf("\n\nAlamat Element setelah element P4 yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L1:\n");
+    Printinfo(L1);
+
+    DelP(&L1, 6);
+    printf("\n\nElemen pada list L1:\n");
+    Printinfo(L1);
+
+    DelP(&L1, 6);
+    printf("\n\nElemen pada list L1:\n");
+    Printinfo(L1);
+
+
+    printf("\n\n======ALAMAT LAST DAN PREC DI L1======");
+    AdrLast(&L1, &Prec1, &Last1);
+    printf("\nAlamat Element Sebelum Last adalah %d\n", Prec1);
+    printf("Alamat Element Last adalah %d\n", Last1);
+
+
+    printf("\n=========APLIKASI PRIMITIF BERDASARKAN NILAI : PENAMBAHAN ============\n");
+    InsVFirst(&L2, 12);
+    printf("Elemen pada list L2:\n");
+    Printinfo(L2);
+
+    InsVLast(&L2, 12);
+    printf("\nElemen pada list L2:\n");
+    Printinfo(L2);
+
+    InsVAfter1(&L2, First(L2), P1);
+    printf("\nElemen pada list L2:\n");
+    Printinfo(L2);
+
+    InsVAfter2(&L2, 12, 90);
+    printf("\nElemen pada list L2:\n");
+    Printinfo(L2);
+
+    printf("\n\n=========APLIKASI PRIMITIF BERDASARKAN NILAI : PENGHAPUSAN ============\n");
+    DelFirst(&L2, &P6);
+    printf("Alamat Element Pertama yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L2:\n");
+    Printinfo(L2);
+
+    DelLast(&L2, &P6);
+    printf("\n\nAlamat Element Terakhir yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L2:\n");
+    Printinfo(L2);
+
+    DelVAfter1(&L2, &T1, 10);
+    printf("\n\nElement yang dihapus adalah %d\n", T1);
+    printf("Elemen pada list L2:\n");
+    Printinfo(L2);
+
+
+    DelVAfter2(&L2, &P6, P1);
+    printf("\n\nAlamat Element yang dihapus adalah %d\n", P6);
+    printf("Elemen pada list L2:\n");
+    Printinfo(L2);
+
+
+    return 0;
+}
